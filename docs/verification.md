@@ -23,3 +23,7 @@ even for the unpackaged app so SDK publish targets carry the resource index.
 Limitations: no visual/manual mouse-and-keyboard pass, clean-machine runtime
 installation test, or Windows 10 run was possible in this session. Folder picker,
 theme/layout appearance and full real CDN downloads remain manual checks.
+
+Published release: https://github.com/maqsatto/MangaDexLite/releases/tag/v0.1.0
+Portable ZIP: 70,444,979 bytes. Lite ZIP: 10,914,028 bytes. GitHub asset SHA256
+digests match local files; public download responds HTTP 200.

@@ -24,7 +24,7 @@ Spec: [design.md](design.md). Execution: inline, as delegated by user.
 - [x] Desktop: App.xaml and MainWindow.xaml/code-behind with search, cancellable
   feed loading, language/group filters, multi-select/range, destination picker,
   download batch, visible errors, settings. Build x64 and fix diagnostics.
-- [ ] Delivery: add README, build/publish scripts and CI; run all core tests,
+- [x] Delivery: add README, build/publish scripts and CI; run all core tests,
   live API smoke, release publish, app launch and `git diff --check`.
   Inspect tracked files for accidental output/secrets, commit and push. Publish
   portable ZIP as a GitHub release and verify the public download URL.
