@@ -1,0 +1,22 @@
+name: Windows build
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Test and publish
+        shell: pwsh
+        run: ./build.ps1 -Edition Portable
+      - uses: actions/upload-artifact@v4
+        with:
+          name: MangaDexLite-win-x64
+          path: artifacts/MangaDexLite-Portable-win-x64.zip
