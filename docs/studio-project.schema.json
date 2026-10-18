@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "MangaLite Studio project v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "sourceDirectory", "pages"],
+  "properties": {
+    "schemaVersion": { "const": 1, "default": 1 },
+    "id": { "type": "string", "format": "uuid" },
+    "title": { "type": "string", "default": "Untitled" },
+    "sourceDirectory": { "type": "string", "minLength": 1, "description": "Relative to the project JSON, or an absolute directory on another drive." },
+    "sourceLanguage": { "type": "string", "default": "auto" },
+    "targetLanguage": { "type": "string", "default": "ru" },
+    "pages": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/page" } }
+  },
+  "$defs": {
+    "bounds": {
+      "type": "object", "additionalProperties": false,
+      "description": "Finite, oriented source-image pixels. Must fit completely within the page; zoom is never persisted.",
+      "required": ["x", "y", "width", "height"],
+      "properties": {
+        "x": { "type": "number", "minimum": 0 },
+        "y": { "type": "number", "minimum": 0 },
+        "width": { "type": "number", "exclusiveMinimum": 0 },
+        "height": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "region": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "bounds"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "bounds": { "$ref": "#/$defs/bounds" },
+        "sourceText": { "type": "string", "default": "", "description": "Manually entered now; future OCR fills this same field." },
+        "translation": { "type": "string", "default": "" },
+        "reviewStatus": { "enum": ["draft", "needsReview", "approved"], "default": "draft" },
+        "translationProvider": { "type": ["string", "null"], "default": null }
+      }
+    },
+    "page": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "sourceFile", "pixelWidth", "pixelHeight"],
+      "properties": {
+        "id": { "type": "string", "format": "uuid" },
+        "sourceFile": { "type": "string", "pattern": "^[^<>:\"/\\\\|?*\\u0000-\\u001f]+\\.([pP][nN][gG]|[jJ][pP][eE]?[gG]|[wW][eE][bB][pP]|[bB][mM][pP]|[gG][iI][fF]|[aA][vV][iI][fF])$", "description": "A single image filename; no path traversal." },
+        "pixelWidth": { "type": "integer", "minimum": 1 },
+        "pixelHeight": { "type": "integer", "minimum": 1 },
+        "regions": { "type": "array", "default": [], "items": { "$ref": "#/$defs/region" } }
+      }
+    }
+  }
+}

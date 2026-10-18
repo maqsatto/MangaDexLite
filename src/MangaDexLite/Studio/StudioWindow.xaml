@@ -1,0 +1,86 @@
+<Window
+    x:Class="MangaDexLite.Studio.StudioWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:studio="using:MangaDexLite.Core.Studio"
+    Title="MangaLite Studio — Translation Studio">
+    <Window.SystemBackdrop><MicaBackdrop /></Window.SystemBackdrop>
+    <Grid x:Name="Root" Padding="20" RowSpacing="12" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <StackPanel Spacing="2"><TextBlock Text="MangaLite Studio" FontSize="24" FontWeight="SemiBold" /><TextBlock Text="Translation Studio · исходные изображения сохраняются" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /></StackPanel>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="DemoButton" Content="Демо" Click="Demo_Click" />
+                <Button x:Name="ImportButton" Content="Импорт главы…" Click="Import_Click" />
+                <Button x:Name="OpenButton" Content="Открыть проект…" Click="Open_Click" />
+                <Button x:Name="SaveAsButton" Content="Сохранить как…" Click="SaveAs_Click" IsEnabled="False" />
+                <Button x:Name="SaveButton" Content="Сохранить" Click="Save_Click" Style="{StaticResource AccentButtonStyle}" IsEnabled="False" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="1" ColumnSpacing="12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+            <TextBlock x:Name="ProjectTitle" Text="Импортируйте скачанную главу или откройте демо" FontWeight="SemiBold" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                <ToggleButton x:Name="DrawButton" Content="Нарисовать область" IsEnabled="False" />
+                <CheckBox x:Name="PreviewCheck" Content="Перевод на странице" IsChecked="True" Click="Preview_Click" />
+                <Button Content="Вписать" Click="Fit_Click" /><Button Content="100%" Click="ActualSize_Click" />
+                <TextBlock x:Name="ZoomLabel" Text="100%" VerticalAlignment="Center" MinWidth="42" />
+            </StackPanel>
+        </Grid>
+        <Grid Grid.Row="2" ColumnSpacing="12">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="150" /><ColumnDefinition Width="*" /><ColumnDefinition Width="290" /></Grid.ColumnDefinitions>
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="10">
+                <Grid Padding="8" RowSpacing="8">
+                    <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                    <TextBlock Text="СТРАНИЦЫ" FontSize="11" Margin="6" />
+                    <ListView x:Name="PagesList" Grid.Row="1" SelectionChanged="Page_Changed" HorizontalContentAlignment="Stretch">
+                        <ListView.ItemTemplate><DataTemplate x:DataType="studio:StudioPage"><StackPanel Padding="2,5" Spacing="4"><TextBlock Text="{x:Bind SourceFile}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" /><TextBlock Text="{x:Bind PixelWidth}" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" /></StackPanel></DataTemplate></ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Border>
+            <Border Grid.Column="1" CornerRadius="10" Background="{ThemeResource ControlFillColorSecondaryBrush}" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1">
+                <Grid>
+                    <ScrollViewer x:Name="PageScroll" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Enabled" VerticalScrollMode="Enabled" ZoomMode="Enabled" MinZoomFactor="0.1" MaxZoomFactor="4" ViewChanged="View_Changed">
+                        <Grid x:Name="PageSurface" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Collapsed">
+                            <Image x:Name="PageImage" Stretch="Fill" />
+                            <Canvas x:Name="RegionCanvas" Background="Transparent" PointerPressed="Canvas_Pressed" PointerMoved="Canvas_Moved" PointerReleased="Canvas_Released" PointerCanceled="Canvas_Canceled" PointerCaptureLost="Canvas_Canceled" />
+                        </Grid>
+                    </ScrollViewer>
+                    <TextBlock x:Name="EmptyHint" Text="Одна страница — от исходника до проверенного перевода.&#xA;Откройте «Демо», чтобы попробовать." TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </Grid>
+            </Border>
+            <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="Текстовые области" FontSize="18" FontWeight="SemiBold" />
+                    <ListView x:Name="RegionsList" Height="140" SelectionChanged="Region_Changed" HorizontalContentAlignment="Stretch">
+                        <ListView.ItemTemplate><DataTemplate x:DataType="studio:TextRegion"><StackPanel Padding="0,4"><TextBlock Text="{x:Bind SourceText}" TextTrimming="CharacterEllipsis" MaxLines="1" /><TextBlock Text="{x:Bind Translation}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" TextTrimming="CharacterEllipsis" MaxLines="1" /></StackPanel></DataTemplate></ListView.ItemTemplate>
+                    </ListView>
+                    <TextBlock x:Name="RegionHint" Text="Нарисуйте прямоугольник или выберите область." TextWrapping="Wrap" FontSize="12" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <ContentControl x:Name="Editor" IsEnabled="False" HorizontalContentAlignment="Stretch"><StackPanel Spacing="10">
+                        <TextBox x:Name="SourceEditor" Header="Исходный текст · вручную" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="85" MaxHeight="150" TextChanged="Draft_Changed" />
+                        <TextBox x:Name="TranslationEditor" Header="Перевод" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="85" MaxHeight="150" TextChanged="Draft_Changed" />
+                        <StackPanel Orientation="Horizontal" Spacing="8"><TextBox x:Name="TargetLanguage" Header="Язык результата" Text="ru" Width="85" TextChanged="Draft_Changed" /><Button x:Name="TranslateButton" Content="Перевести · Mock" Click="Translate_Click" VerticalAlignment="Bottom" /></StackPanel>
+                        <TextBlock Text="Mock — демонстрация без сети, не настоящий переводчик." FontSize="11" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <Grid ColumnSpacing="8" RowSpacing="8">
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /></Grid.RowDefinitions>
+                            <NumberBox x:Name="XBox" Header="X · px" SpinButtonPlacementMode="Compact" ValueChanged="Coordinate_Changed" />
+                            <NumberBox x:Name="YBox" Grid.Column="1" Header="Y · px" SpinButtonPlacementMode="Compact" ValueChanged="Coordinate_Changed" />
+                            <NumberBox x:Name="WidthBox" Grid.Row="1" Header="Ширина · px" SpinButtonPlacementMode="Compact" ValueChanged="Coordinate_Changed" />
+                            <NumberBox x:Name="HeightBox" Grid.Row="1" Grid.Column="1" Header="Высота · px" SpinButtonPlacementMode="Compact" ValueChanged="Coordinate_Changed" />
+                        </Grid>
+                        <ComboBox x:Name="ReviewBox" Header="Проверка перевода" HorizontalAlignment="Stretch" SelectionChanged="Review_Changed"><ComboBoxItem Content="Черновик" /><ComboBoxItem Content="К проверке" /><ComboBoxItem Content="Одобрено" /></ComboBox>
+                        <StackPanel Orientation="Horizontal" Spacing="8"><Button Content="Применить" Click="Apply_Click" /><Button Content="Удалить область" Click="Delete_Click" /></StackPanel>
+                        <TextBlock Text="Перетащите область для перемещения. Нижний правый угол меняет размер. Ctrl + колесо — масштаб." TextWrapping="Wrap" FontSize="11" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    </StackPanel></ContentControl>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+        <StackPanel Grid.Row="3" Spacing="6">
+            <ProgressBar x:Name="BusyBar" IsIndeterminate="True" Visibility="Collapsed" Height="3" />
+            <TextBlock x:Name="Status" Text="Все правки хранятся в проекте. Исходные изображения не изменяются." FontSize="12" TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            <InfoBar x:Name="MessageBar" IsOpen="False" IsClosable="True" />
+        </StackPanel>
+    </Grid>
+</Window>

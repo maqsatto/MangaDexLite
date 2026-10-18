@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "771a03ad-e535-4b97-ab62-a2f8b467d3d0",
+  "title": "MangaLite Studio — демо",
+  "sourceDirectory": ".",
+  "sourceLanguage": "en",
+  "targetLanguage": "ru",
+  "pages": [
+    {
+      "id": "3996753a-e077-4bae-bcca-826e310d2f04",
+      "sourceFile": "001.png",
+      "pixelWidth": 700,
+      "pixelHeight": 900,
+      "regions": [
+        {
+          "id": "a0cfffa4-6559-4321-b19d-21eaa073f461",
+          "bounds": { "x": 85, "y": 140, "width": 230, "height": 85 },
+          "sourceText": "Hello!",
+          "translation": "Привет!",
+          "reviewStatus": "needsReview",
+          "translationProvider": "manual"
+        }
+      ]
+    }
+  ]
+}

@@ -14,6 +14,7 @@ namespace MangaDexLite;
 
 public sealed partial class MainWindow : Window
 {
+    private Studio.StudioWindow? studioWindow;
     private readonly MangaDexClient api = new();
     private readonly ObservableCollection<Manga> results = [];
     private readonly SettingsStore settings = new(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MangaDexLite", "settings.json"));
@@ -257,6 +258,20 @@ public sealed partial class MainWindow : Window
         catch (Exception ex) { ShowMessage(ex.Message); }
     }
     private async void OpenSite_Click(object sender, RoutedEventArgs e) => await Launcher.LaunchUriAsync(new Uri("https://mangadex.org"));
+    private void OpenStudio_Click(object sender, RoutedEventArgs e)
+    {
+        if (studioWindow is null)
+        {
+            studioWindow = new Studio.StudioWindow();
+            studioWindow.Closed += Studio_Closed;
+        }
+        studioWindow.Activate();
+    }
+    private void Studio_Closed(object sender, WindowEventArgs e)
+    {
+        if (studioWindow is not null) studioWindow.Closed -= Studio_Closed;
+        studioWindow = null;
+    }
     private void Cancel_Click(object sender, RoutedEventArgs e)
     {
         downloadCancellation?.Cancel();
