@@ -14,7 +14,12 @@ public partial class App : Application
     {
         try
         {
-            window = new MainWindow();
+            string[] commandLine = Environment.GetCommandLineArgs();
+            int projectArgument = Array.IndexOf(commandLine, "--project");
+            if (commandLine.Contains("--studio-demo")) window = new Studio.StudioWindow(Studio.StudioWindow.DemoProjectFile);
+            else if (projectArgument >= 0 && projectArgument + 1 < commandLine.Length) window = new Studio.StudioWindow(commandLine[projectArgument + 1]);
+            else if (commandLine.Contains("--studio")) window = new Studio.StudioWindow();
+            else window = new MainWindow();
             window.Activate();
         }
         catch (Exception ex) { LogFailure(ex); throw; }

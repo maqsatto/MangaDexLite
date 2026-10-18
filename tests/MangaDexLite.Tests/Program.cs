@@ -206,6 +206,7 @@ await Test("Damaged settings are preserved; optional values recover", async () =
     finally { Directory.Delete(root, true); }
 });
 Console.WriteLine($"{passed} tests passed.");
+await StudioTests.RunAsync();
 
 if (args.Contains("--live"))
 {

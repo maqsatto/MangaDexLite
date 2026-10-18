@@ -28,5 +28,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" Version="2.5.1" />
     <ProjectReference Include="../MangaDexLite.Core/MangaDexLite.Core.csproj" />
     <Content Update="Assets\AppIcon.ico" CopyToOutputDirectory="PreserveNewest" />
+    <Content Update="Assets\StudioDemo\**\*" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    <None Update="Assets\StudioDemo\*.json" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

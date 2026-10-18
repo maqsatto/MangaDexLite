@@ -1,5 +1,6 @@
 param(
-    [ValidateSet('Portable', 'Lite')][string]$Edition = 'Portable'
+    [ValidateSet('Portable', 'Lite')][string]$Edition = 'Portable',
+    [ValidatePattern('^[A-Za-z0-9-]+$')][string]$ArtifactName = 'MangaDexLite'
 )
 $ErrorActionPreference = 'Stop'
 $dotnet = (Get-Command dotnet -ErrorAction SilentlyContinue).Source
@@ -20,6 +21,7 @@ try {
     }
     Copy-Item -LiteralPath README.md -Destination (Join-Path $output 'README.md')
     Copy-Item -LiteralPath LICENSE -Destination (Join-Path $output 'LICENSE.txt')
+    Copy-Item -LiteralPath docs -Destination (Join-Path $output 'docs') -Recurse
     $assets = Get-Content src/MangaDexLite/obj/project.assets.json -Raw | ConvertFrom-Json
     $packageRoot = $assets.packageFolders.PSObject.Properties.Name | Select-Object -First 1
     $licenseSources = @($assets.libraries.PSObject.Properties | Where-Object { $_.Value.type -eq 'package' } | ForEach-Object { Join-Path $packageRoot $_.Value.path })
@@ -38,7 +40,7 @@ try {
             }
         }
     }
-    $zip = Join-Path $PSScriptRoot "artifacts/MangaDexLite-$Edition-win-x64.zip"
+    $zip = Join-Path $PSScriptRoot "artifacts/$ArtifactName-$Edition-win-x64.zip"
     Compress-Archive -Path (Join-Path $output '*') -DestinationPath $zip -Force
     $size = [math]::Round((Get-Item -LiteralPath $zip).Length / 1MB, 1)
     Write-Output "$zip ($size MiB)"
